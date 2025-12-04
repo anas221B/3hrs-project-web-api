@@ -1,12 +1,110 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>hi 1</title>
+<head>
+    <title>Storing user details with CrudCrud and Axios</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="test.css">
+</head>
+<body>
+
+    <label for="price">Price:</label>
+    <input type="text" id="price">
+    <br><br>
+    <label for="product_name">Product name:</label>
+    <input type="text" id="product_name">
+    <br><br>
+    <label for="category">Category:</label>
+        <select id="category">
+            <option value="electronics">Electronics</option>
+            <option value="health">Health</option>
+            <option value="skin_care">Skin Care</option>
+        </select>
+        <br><br>
+    <button onclick="store()">Add Product</button>
+        <h2>Products:</h2>
+        <h3>Electronics Items:</h3>
+        <div id="container1"></div>
+        <h3>Health:</h3>
+        <div id="container2"></div>
+        <h3>Skin Care:</h3>
+        <div id="container3"></div>
+
+    <script type="text/javascript">
+
+        const API_URL = 'https://crudcrud.com/api/d0b819468d6b487691c87477d902d569/product_details'; 
         
-    </head>
-    <body>
-        <h1>hello 1</h1>
-        <button onclick="alert('clicked')">click</button>
-        </body>
+        window.addEventListener("DOMContentLoaded", function () {
+            axios.get(API_URL)
+                .then(response => {
+                    display(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+
+        function store() {
+            let price = document.getElementById("price").value;
+            let product_name = document.getElementById("product_name").value;
+            let category = document.getElementById("category").value;
+
+            let newProduct = {
+                price: price,
+                product_name: product_name,
+                category: category
+            };
+
+            axios.post(API_URL, newProduct)
+                .then(response => {
+                    console.log('Success:', response.data);
+                    return axios.get(API_URL);
+                })
+                .then(response => {
+                    display(response.data);
+                })
+                .catch((error) => {
+                    console.error( error);
+                });
+        }
+
+        
+        function remove(id) {
+            axios.delete(`${API_URL}/${id}`)
+                .then(response => {
+                    console.log('Success Deletion');
+                    return axios.get(API_URL);
+                })
+                .then(response => {
+                    display(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function display(products) {
+            document.getElementById("container1").innerHTML = '';
+            document.getElementById("container2").innerHTML = '';
+            document.getElementById("container3").innerHTML = '';
+
+            if (products && products.length > 0) {
+                products.forEach(product => {
+                    let id;
+                    if(product.category == "electronics")
+                        id = "container1";
+                    else if(product.category == "health")
+                        id = "container2"
+                    else if(product.category == "skin_care")
+                        id = "container3"
+                    let product_container = document.getElementById(id);
+                    product_container.innerHTML += `
+                        <li>  ${product.price} - ${product.product_name} - ${product.category}
+                            <button onclick="remove('${product._id}')">Delete</button>
+                        </li>`;
+                });
+            }
+        }
+    </script>
+</body>
 </html>
 
