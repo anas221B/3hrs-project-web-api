@@ -1,65 +1,131 @@
+/* Reset some defaults */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* Basic readable font [web:9] */
+}
+
+/* Page layout */
 body {
-    background-color: rgba(212, 212, 12, 0.516);
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    background-color: #9ccdda;
+    padding: 20px;
     color: #333;
 }
 
+/* Form & filter area */
 label {
-    font-weight: bold;
+    display: inline-block;
+    width: 120px;
+    margin-bottom: 5px;
+    /* justify-content: center; */
 }
 
-input[type="text"], select {
-    padding: 6px;
-    margin-top: 4px;
-    margin-bottom: 10px;
-    width: 200px;
-    border: 1px solid #ccc;
+input[type="text"],
+input[type="number"],
+select {
+    padding: 6px 8px;
+    border: 1px solid #ccc; /* Common input border pattern [web:1] */
     border-radius: 4px;
+    min-width: 220px;
 }
 
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* Buttons */
 button {
-    padding: 8px 15px;
-    background-color: #007bff;
+    background-color: #4caf50; /* Basic button styling inspired by examples [web:2][web:7] */
+    color: #fff;
     border: none;
-    color: white;
-    cursor: pointer;
+    padding: 8px 14px;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 5px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #43a047;
 }
 
-h2, h3 {
-    margin: 12px 0 8px 0;
-}
-
-#container1, #container2, #container3 {
-    background-color: #fff;
+/* Filter section */
+div[style*="margin-bottom: 20px"] {
+    background-color: #dadfe1;
     border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 4px;
-    min-height: 40px;
-    max-width: 400px;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 6px;
 }
 
-li {
-    list-style-type: none;
-    margin: 6px 0;
-    padding: 6px;
-    background-color: #f0f0f0;
-    border-radius: 3px;
+/* Products section */
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
+h3 {
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+/* Category containers */
+#container1,
+#container2,
+#container3 {
+    background-color: #dadfe1;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    border-radius: 6px;
+    min-height: 30px;
+    margin-bottom: 15px;
+}
+
+/* Product list items */
+#container1 li,
+#container2 li,
+#container3 li {
+    list-style: none; /* Remove bullets [web:15] */
+    padding: 6px 0;
+    border-bottom: 1px solid #dadfe1;
+}
+
+#container1 li:last-child,
+#container2 li:last-child,
+#container3 li:last-child {
+    border-bottom: none;
+}
+
+/* Delete button inside list */
 li button {
-    margin-left: 15px;
-    padding: 3px 7px;
-    background-color: #dc3545;
-    border-radius: 3px;
+    background-color: #e53935;
+    padding: 4px 10px;
+    font-size: 12px;
 }
 
 li button:hover {
-    background-color: #a71d2a;
+    background-color: #c62828;
+}
+
+/* Small responsiveness */
+@media (max-width: 600px) {
+    label {
+        width: 100%;
+        margin-bottom: 3px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    button {
+        margin-top: 8px;
+    }
 }

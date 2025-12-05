@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="test.css">
 </head>
 <body>
-
+    
     <label for="price">Price:</label>
     <input type="text" id="price">
     <br><br>
@@ -20,7 +20,23 @@
             <option value="skin_care">Skin Care</option>
         </select>
         <br><br>
-    <button onclick="store()">Add Product</button>
+          <button onclick="store()">Add Product</button>
+        
+
+        <div style="margin-bottom: 20px;">
+        <h3>Filter Products:</h3>
+        <label for="filter_price">Price:</label>
+        <input type="number" id="filter_price" min="0" placeholder="0"><br><br>
+        <label for="filter_category">Category:</label>
+        <select id="filter_category">
+            <option value="">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="health">Health</option>
+            <option value="skin_care">Skin Care</option>
+        </select>
+        <button onclick="filterProducts()">  Filter</button>
+        <button onclick="clearFilter()">  Clear Filter</button>
+    </div>
         <h2>Products:</h2>
         <h3>Electronics Items:</h3>
         <div id="container1"></div>
@@ -28,12 +44,22 @@
         <div id="container2"></div>
         <h3>Skin Care:</h3>
         <div id="container3"></div>
+   
 
     <script type="text/javascript">
-
-        const API_URL = 'https://crudcrud.com/api/d0b819468d6b487691c87477d902d569/product_details'; 
+        const API_URL = 'https://crudcrud.com/api/0ca4641917354d99852918c652a6319b/product_details'; 
         
+        // Filter state
+        let currentFilter = {
+            minPrice: '',
+            category: ''
+        };
+
         window.addEventListener("DOMContentLoaded", function () {
+            loadAndDisplay();
+        });
+
+        function loadAndDisplay() {
             axios.get(API_URL)
                 .then(response => {
                     display(response.data);
@@ -41,12 +67,17 @@
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-        });
+        }
 
         function store() {
             let price = document.getElementById("price").value;
             let product_name = document.getElementById("product_name").value;
             let category = document.getElementById("category").value;
+
+            if (!price || !product_name || !category) {
+                alert('Please fill all fields');
+                return;
+            }
 
             let newProduct = {
                 price: price,
@@ -57,38 +88,62 @@
             axios.post(API_URL, newProduct)
                 .then(response => {
                     console.log('Success:', response.data);
-                    return axios.get(API_URL);
-                })
-                .then(response => {
-                    display(response.data);
+                    document.getElementById("price").value = '';
+                    document.getElementById("product_name").value = '';
+                    loadAndDisplay();
                 })
                 .catch((error) => {
-                    console.error( error);
+                    console.error(error);
                 });
         }
 
-        
         function remove(id) {
-            axios.delete(`${API_URL}/${id}`)
-                .then(response => {
-                    console.log('Success Deletion');
-                    return axios.get(API_URL);
-                })
-                .then(response => {
-                    display(response.data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            if (confirm('Are you sure you want to delete this product?')) {
+                axios.delete(`${API_URL}/${id}`)
+                    .then(response => {
+                        console.log('Success Deletion');
+                        loadAndDisplay();
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        function filterProducts() {
+            currentFilter.minPrice = document.getElementById("filter_price").value;
+            currentFilter.category = document.getElementById("filter_category").value;
+            loadAndDisplay();
+        }
+
+        function clearFilter() {
+            document.getElementById("filter_price").value = '';
+            document.getElementById("filter_category").value = '';
+            currentFilter.minPrice = '';
+            currentFilter.category = '';
+            loadAndDisplay();
         }
 
         function display(products) {
+            // Clear all containers
             document.getElementById("container1").innerHTML = '';
             document.getElementById("container2").innerHTML = '';
             document.getElementById("container3").innerHTML = '';
 
             if (products && products.length > 0) {
-                products.forEach(product => {
+                let filteredProducts = products.filter(product => {
+                    // Filter by price
+                    if (currentFilter.minPrice && product.price < parseFloat(currentFilter.minPrice)) {
+                        return false;
+                    }
+                    // Filter by category
+                    if (currentFilter.category && product.category !== currentFilter.category) {
+                        return false;
+                    }
+                    return true;
+                });
+
+                filteredProducts.forEach(product => {
                     let id;
                     if(product.category == "electronics")
                         id = "container1";
@@ -96,15 +151,27 @@
                         id = "container2"
                     else if(product.category == "skin_care")
                         id = "container3"
+                    
                     let product_container = document.getElementById(id);
                     product_container.innerHTML += `
-                        <li>  ${product.price} - ${product.product_name} - ${product.category}
-                            <button onclick="remove('${product._id}')">Delete</button>
+                        <li style="margin: 5px 0;"> 
+                            ${product.price} - ${product.product_name} (${product.category})
+                            <button onclick="remove('${product._id}')" style="margin-left: 10px;">Delete</button>
                         </li>`;
                 });
+
+                // Show filter info
+                let filterText = '';
+                if (currentFilter.minPrice || currentFilter.category) {
+                    filterText = ` (Showing ${filteredProducts.length} of ${products.length} products)`;
+                    document.querySelector('h2').innerHTML = `Products:${filterText}`;
+                } else {
+                    document.querySelector('h2').innerHTML = 'Products:';
+                }
+            } else {
+                document.querySelector('h2').innerHTML = 'Products: (No products found)';
             }
         }
     </script>
 </body>
 </html>
-
