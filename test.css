@@ -11,9 +11,8 @@ body {
     background-color: #9ccdda;
     padding: 20px;
     color: #333;
-}
+} 
 
-/* Form & filter area */
 label {
     display: inline-block;
     width: 120px;
