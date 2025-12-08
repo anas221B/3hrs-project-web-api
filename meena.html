@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Seller Access Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body style="background-color: antiquewhite">
+    <h1
+      style="
+        margin-left: 5%;
+        margin-right: 5%;
+        text-align: center;
+        border: #000 solid;
+        padding: 1%;
+      "
+    >
+      Seller Access Space
+    </h1>
+    <fieldset style="margin-left: 5%; margin-right: 5%">
+      <legend
+        style="
+          font-size: large;
+          font-weight: bold;
+          border: 1px solid #000;
+          padding-left: 10px;
+          padding-right: 10px;
+          background-color: aliceblue;
+        "
+      >
+        New Product
+      </legend>
+      <h3>
+          <label for="price">Price:</label>
+          <input
+            type="number"
+            id="price"
+            placeholder="Enter in INR"
+          /><br /><br />
+
+          <label for="product_name"> Product name: </label>
+          <input type="text" id="product_name" /><br /><br />
+
+          <label for="category">Category:</label>
+          <select id="category">
+            <option></option>
+            <option value="Electronics">Electronics</option>
+            <option value="Health">Health</option>
+            <option value="Skin care">Skin Care</option></select
+          ><br /><br />
+
+          <label for="product_description">Product Description:</label>
+          <textarea
+            id="product_description"
+            style="height: 30px"
+            placeholder="(Optional)"
+          ></textarea>
+          <br /><br />
+          <button
+            onClick="store()"
+            style="
+              background-color: aliceblue;
+              font-weight: bold;
+              border: 1px solid black;
+            "
+          >
+            Add Product
+          </button>
+        </form>
+      </h3>
+    </fieldset>
+    <br />
+    <fieldset style="margin-left: 5%; margin-right: 5%">
+      <legend
+        style="
+          font-size: large;
+          font-weight: bold;
+          border: 1px solid #000;
+          padding-left: 10px;
+          padding-right: 10px;
+          background-color: aliceblue;
+        "
+      >
+        Products List
+      </legend>
+      <br />
+      <button onclick="viewtraditional()" id="traditional" style="font-weight: bold; background-color: aliceblue; border: 1px solid black;">Traditional View</button>
+      <button onclick="viewtabulation()" id="tabulational" style="background-color: aliceblue; border: 1px solid black;">Tabulation View</button>
+      <br><br>
+      
+      <input type="text" id="search" list="suggestions" oninput="showsuggestions()">
+      <datalist id="suggestions">
+      </datalist>
+      <button onclick="filter()" style="background-color: aliceblue; font-weight: bold; border: 1px solid black;">Search</button>
+      <button onclick = "refreshData()" style="background-color: aliceblue; font-weight: bold; border: 1px solid black;">Refresh</button>
+      <br><br>
+
+      <label for="sort">Sort</label>
+      <select id="sort">
+          <option value="price">Price</option>
+          <option value="product_name">Product</option>
+          <option value="category">Category</option>
+      </select>
+      <button onclick="sort()" style="background-color: aliceblue; font-weight: bold; border: 1px solid black;">Go</button>
+      <br><br>
+      <div id="container"></div>
+    </fieldset>
+  </body>
+  <script type="text/javascript">
+    const API_URL =
+      "https://crudcrud.com/api/cedaf4f1fc444b47a6d8285c9558e07e/product_details";
+        let displaydata;
+        let view = 'traditional';
+
+        window.addEventListener("DOMContentLoaded", () => {
+            refreshData();
+        });
+        
+        function refreshData(){
+            axios.get(API_URL)
+            .then(response => {
+                displaydata = response.data;
+                (view == 'traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+            })
+            .catch((error) => {
+                console.error( error);
+            });
+        }
+
+        function capitalizeEachWord(input) {
+            let words = input.split(' ');
+            let capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+            let capitalizedText = capitalizedWords.join(' ');
+            return capitalizedText;
+        }
+
+        function markFieldAsEmpty(inputField) {
+            inputField.insertAdjacentHTML('afterend', '<span id="!" style="color: red; margin-left: 5px;">!</span>');
+            inputField.focus();
+        }
+
+        function removeExclamationMark(inputField) {
+            let exclamationMark = inputField.nextElementSibling;
+            if (exclamationMark && exclamationMark.tagName === 'SPAN' && exclamationMark.id === '!') {
+                exclamationMark.remove();
+            }
+        }
+
+        function store() {
+            let price = document.getElementById("price").value.trim();
+            let product_name = capitalizeEachWord(document.getElementById("product_name").value.trim());
+            let category = document.getElementById("category").value.trim();
+            let product_description = document.getElementById("product_description").value.trim();
+            removeExclamationMark(document.getElementById("price"));
+            removeExclamationMark(document.getElementById("product_name"));
+            removeExclamationMark(document.getElementById("category"));
+            if(!price || !product_name || !category){
+                if (!category) 
+                    markFieldAsEmpty(document.getElementById("category"));
+                if (!product_name)
+                    markFieldAsEmpty(document.getElementById("product_name"));
+                if (!price)
+                    markFieldAsEmpty(document.getElementById("price"));
+                return;
+            }
+            let newProduct = {
+                price: price,
+                product_name: product_name,
+                category: category,
+                product_description: product_description
+            };
+
+            axios.post(API_URL, newProduct)
+            .then(response => {
+                console.log('Product added successfully!', response.data);
+                return axios.get(API_URL);
+            })
+            .then(response => {
+                displaydata = response.data;
+                (view == 'traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+            document.getElementById("price").value = "";
+            document.getElementById("product_name").value = "";
+            document.getElementById("category").value = "";
+            document.getElementById("product_description").value = "";
+        }
+
+        function remove(id) {
+            axios.delete(`${API_URL}/${id}`)
+            .then(response => {
+                console.log('Product Deleted successfully!',response.data);
+            document.getElementById("price").value = "";
+            document.getElementById("product_name").value = "";
+            document.getElementById("category").value = "";
+            document.getElementById("product_description").value = "";
+                return axios.get(API_URL);
+            })
+            .then(response => {
+                displaydata = response.data;
+                (view == 'traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        function edit(id) {
+            axios.get(`${API_URL}/${id}`)
+            .then(response => {
+                document.getElementById("price").value = response.data.price;
+                document.getElementById("product_name").value = response.data.product_name;
+                document.getElementById("category").value = response.data.category;
+                document.getElementById("product_description").value = response.data.product_description;
+                return axios.delete(`${API_URL}/${id}`);
+            })
+            .then(response => {
+                console.log('Product available to edit!',response.data);
+                return axios.get(API_URL);
+            })
+            .then(response => {
+                displaydata = response.data;
+                (view == 'traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function sort() {
+            let type = document.getElementById("sort").value;
+            if (type === 'price') {
+                displaydata.sort((a, b) => (parseInt(a.price,10) - parseInt(b.price,10)));
+            } else {
+                displaydata.sort((a, b) => a[type].localeCompare(b[type]));
+            }
+
+            (view == 'traditional') ? displayTraditional(displaydata) : displayTabulation(displaydata);
+        }
+
+        function filter() {
+            searchText = document.getElementById("search").value.trim();
+            if (!searchText.trim()) {
+                axios.get(API_URL)
+                .then(response => {
+                    displaydata = response.data;
+                    (view=='traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+                })
+                .catch(err => console.log(err));
+            }
+            else {
+                axios.get(API_URL)
+                .then(response => {
+                    products = response.data;
+                    displaydata = products.filter(product => {
+                        return (
+                            product.product_name.toLowerCase().includes(searchText.toLowerCase()) ||
+                            product.category.toLowerCase().includes(searchText.toLowerCase())
+                        );
+                    });
+                    (view == 'traditional')? displayTraditional(displaydata):displayTabulation(displaydata);
+                })
+                .catch(err => console.log(err));
+            }
+        }
+
+        async function showsuggestions() {
+            let input = document.getElementById('search').value.toLowerCase();
+            let dataList = document.getElementById('suggestions');
+            dataList.innerHTML = `
+                <option value="Electronics"></option>
+                <option value="Health"></option>
+                <option value="Skin care"></option>
+            `;
+            let products = (await axios.get(API_URL)).data;
+            let data = new Set();
+            let filteredOptions = products.filter(product => {
+                let productName = product.product_name.toLowerCase();
+                if (productName.includes(input) && !data.has(productName)) {
+                    data.add(productName); 
+                    return true;
+                }
+                return false;
+            });
+            filteredOptions.forEach(product => {
+                let option = document.createElement('option');
+                option.value = product.product_name;
+                dataList.appendChild(option);
+            });
+            data.clear();
+        }
+
+        function viewtraditional(){
+            view = 'traditional';
+            var tradition = document.getElementById("traditional");
+            var tabular = document.getElementById("tabulational");
+            tradition.style.fontWeight = "bold";
+            tabular.style.fontWeight = "normal";
+            displayTraditional(displaydata);
+        }
+
+        function viewtabulation(){
+            view = 'tabulational';
+            var tradition = document.getElementById("traditional");
+            var tabular = document.getElementById("tabulational");
+            tradition.style.fontWeight = "normal";
+            tabular.style.fontWeight = "bold";
+            displayTabulation(displaydata);
+        }
+
+        function displayTraditional(products) {
+            let container = document.getElementById("container");
+            container.innerHTML = `
+            <h3>Electronics:</h3>
+            <div id="container1"></div>
+            <h3>Health:</h3>
+            <div id="container2"></div>
+            <h3>Skin Care:</h3>
+            <div id="container3"></div>`;
+            document.getElementById("container1").innerHTML = '';
+            document.getElementById("container2").innerHTML = '';
+            document.getElementById("container3").innerHTML = '';
+
+            if (products && products.length > 0) {
+                products.forEach(product => {
+                    let id;
+                    switch (product.category.toLowerCase()) {
+                        case "electronics":
+                            id = "container1";
+                            break;
+                        case "health":
+                            id = "container2";
+                            break;
+                        case "skin care":
+                            id = "container3";
+                            break;
+                    }
+                    let product_container = document.getElementById(id);
+                    product_container.innerHTML += `
+                        <li title="${product.product_description}"> ${product.product_name}: ${product.price} INR
+                            <button style="background-color: aliceblue; border: 1px solid black;" onclick="remove('${product._id}')">Remove</button>
+                            <button style="background-color: aliceblue; border: 1px solid black;" onclick="edit('${product._id}')">Edit</button>
+                        </li>`;
+                });
+            }
+        }
+
+        function displayTabulation(products) {
+            let container = document.getElementById("container");
+            let tableHTML = `
+                <table id="table" style="border-collapse: collapse; width: 100%; border: 1px solid black;">
+                    <tr style="border: 1px solid black;">
+                        <th style="border: 1px solid black;">Category</th>
+                        <th style="border: 1px solid black;">Price</th>
+                        <th style="border: 1px solid black;">Product</th>
+                    </tr>
+            `;
+            if (products && products.length > 0) {
+                products.forEach(product => {
+                    tableHTML += `
+                        <tr style="border: 1px solid black;">
+                            <td style="border: 1px solid black;">${product.category}</td>
+                            <td style="border: 1px solid black;">${product.price}</td>
+                            <td style="border: 1px solid black;">${product.product_name}</td>
+                        </tr>
+                    `;
+                });
+            }
+            tableHTML += `</table>`;
+            container.innerHTML = tableHTML;
+        }
+  </script>
+</html>

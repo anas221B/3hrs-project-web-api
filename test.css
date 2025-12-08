@@ -1,104 +1,66 @@
-/* Reset some defaults */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; /* Basic readable font [web:9] */
+    font-family: Arial, sans-serif; 
 }
-
 /* Page layout */
 body {
     background-color: #9ccdda;
-    padding: 20px;
-    color: #333;
-} 
-
+    padding: 50px;
+}
+/* Form & filter area */
 label {
     display: inline-block;
-    width: 120px;
+    width: 150px;
     margin-bottom: 5px;
-    /* justify-content: center; */
 }
-
 input[type="text"],
 input[type="number"],
 select {
     padding: 6px 8px;
-    border: 1px solid #ccc; /* Common input border pattern [web:1] */
-    border-radius: 4px;
-    min-width: 220px;
+    border: 1px solid #ccc; 
+    border-radius: 10px;
+    min-width: 300px;
 }
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus {
-    border-color: #4caf50;
-    outline: none;
-}
-
-/* Buttons */
-button {
-    background-color: #4caf50; /* Basic button styling inspired by examples [web:2][web:7] */
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-button:hover {
-    background-color: #43a047;
-}
-
 /* Filter section */
-div[style*="margin-bottom: 20px"] {
+.wrap{
     background-color: #dadfe1;
     border: 1px solid #ddd;
     padding: 15px;
-    margin: 20px 0;
-    border-radius: 6px;
+    margin: 15px 0;
+    border-radius: 15px;
 }
-
 /* Products section */
-h2 {
+h2,h3 {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-
-h3 {
-    margin-top: 15px;
-    margin-bottom: 8px;
-}
-
 /* Category containers */
 #container1,
 #container2,
 #container3 {
     background-color: #dadfe1;
-    border: 1px solid #ddd;
-    padding: 10px 15px;
+    border: 10px solid #ddd;
+    padding: 10px 10px;
     border-radius: 6px;
     min-height: 30px;
     margin-bottom: 15px;
 }
-
-/* Product list items */
-#container1 li,
-#container2 li,
-#container3 li {
-    list-style: none; /* Remove bullets [web:15] */
-    padding: 6px 0;
-    border-bottom: 1px solid #dadfe1;
+/* Buttons */
+button {
+    background-color: #4caf50; 
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
-
-#container1 li:last-child,
-#container2 li:last-child,
-#container3 li:last-child {
-    border-bottom: none;
+button:hover {
+    background-color: #43a047;
 }
-
 /* Delete button inside list */
 li button {
     background-color: #e53935;
@@ -110,21 +72,3 @@ li button:hover {
     background-color: #c62828;
 }
 
-/* Small responsiveness */
-@media (max-width: 600px) {
-    label {
-        width: 100%;
-        margin-bottom: 3px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    button {
-        margin-top: 8px;
-    }
-}
