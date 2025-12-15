@@ -100,4 +100,12 @@ li button.edit-btn:hover {
     gap: 8px;
     justify-content: flex-end;
 }
+.top-sections {
+    display: flex;
+    gap: 20px;              
+    align-items: flex-start;
+}
+.top-sections .wrap {
+    flex: 1;             
+}
 

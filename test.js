@@ -128,6 +128,7 @@ function display(productsArray) {
     const render = (product, containerId) => {
         const li = document.createElement('li');
         li.className = 'product-row';
+
         li.innerHTML = `
             <span class="product-text">${product.product_name}</span>
             <span class="product-text">${product.price}/- INR</span>
