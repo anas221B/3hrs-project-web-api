@@ -42,7 +42,11 @@ h2,h3 {
     padding: 10px 10px;
     border-radius: 6px;
     min-height: 30px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+}
+li {
+    margin-bottom: 10px; 
+    list-style: none;    
 }
 
 button {
@@ -65,5 +69,35 @@ li button {
 }
 li button:hover {
     background-color: #c62828;
+}
+li button.edit-btn {
+    background-color: #2196f3; 
+    color: white;
+    padding: 4px 10px;
+    font-size: 12px;
+   
+}
+li button.edit-btn:hover {
+    background-color: #1976d2;
+}
+.product-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto; 
+    align-items: center;
+    padding: 8px 0;
+    margin-bottom: 8px;
+}
+.product-text {
+    text-align: left;
+    font-size: 16px;
+}
+.product-price {
+    text-align: center;
+    font-weight: 500;
+}
+.product-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
 }
 

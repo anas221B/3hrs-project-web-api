@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="test.css" />
   </head>
   <body>
+    <h1 style="text-align: center;">Seller Page</h1>
     <div class="wrap">
     <h3>Product details:</h3>
      <label for="price">Price:</label>
@@ -21,7 +22,7 @@
             <option value="skin_care">Skin Care</option>
         </select>
         <br><br>
-          <button onclick="store()">Add Product</button>
+          <button id="submitBtn" onclick="store()">Add Product</button>
     </div>
 
      <div class="wrap">
@@ -29,7 +30,7 @@
   <label for="filter_name">Product name:</label>
   <input type="text" id="filter_name" placeholder="Search">
   <br><br>
-  <label for="filter_price">Min Price:</label>
+  <label for="filter_price">Max Price:</label>
   <input type="number" id="filter_price" min="0" placeholder="0">
   <br><br>
   <label for="filter_category">Category:</label>
